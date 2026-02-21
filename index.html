@@ -365,7 +365,7 @@
 
     async function fetchMessages() {
       try {
-        const res = await fetch('https://YOUR-RENDER-APP.onrender.com/messages');
+        const res = await fetch('https://oscichat.onrender.com/messages');
         const messages = await res.json();
         
         const chat = document.getElementById('chat');
@@ -437,7 +437,7 @@
       messageEl.disabled = true;
       
       try {
-        await fetch('https://YOUR-RENDER-APP.onrender.com/messages', {
+        await fetch('https://oscichat.onrender.com/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user, message, key: COMPANY_KEY })
