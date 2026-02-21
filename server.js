@@ -2,6 +2,7 @@ const express = require('express');
 const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path'); // <-- NEW: Helps find the HTML file
 require('dotenv').config();
 
 const app = express();
@@ -20,16 +21,23 @@ const auth = new google.auth.GoogleAuth({
 const sheets = google.sheets({ version: 'v4', auth });
 const SHEET_ID = process.env.SHEET_ID;
 
+// === NEW: SERVE THE FRONTEND UI ON THE MAIN SITE ===
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // GET last 100 messages
 app.get('/messages', async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'OscillationChat!A:C',
+      // NOTE: Make sure your Google Sheet tab is named 'OscillationChat'
+      range: 'OscillationChat!A:C', 
     });
     const allMessages = response.data.values || [];
     res.json(allMessages.slice(-100));
   } catch (err) {
+    console.error(err);
     res.status(500).send(err.message);
   }
 });
@@ -49,6 +57,7 @@ app.post('/messages', async (req, res) => {
     });
     res.send('Message sent');
   } catch (err) {
+    console.error(err);
     res.status(500).send(err.message);
   }
 });
